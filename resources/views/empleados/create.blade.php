@@ -64,8 +64,8 @@
                 <label for="rol" class="form-label">Rol</label>
                 <select id="rol" name="rol" class="form-select" required>
                     <option value=""></option>
-                    <option value="Usuario">Usuario</option>
-                    <option value="Admin">Admin</option>
+                    <option value="User">Usuario</option>
+                    <option value="Admin">Administrador</option>
                 </select>
             </div>
 

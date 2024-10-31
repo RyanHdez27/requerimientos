@@ -11,18 +11,20 @@ class AdminUserSeeder extends Seeder
 {
     public function run()
     {
-        // Lista de administradores
+        // Crear el rol de "Admin" si no existe
+        $adminRole = Role::firstOrCreate(['name' => 'Admin']);
+
+        // Lista de administradores a crear
         $admins = [
             [
                 'name' => 'Administrador',
                 'email' => 'administrador@gmail.com',
                 'password' => '794613',
             ],
-
         ];
 
         foreach ($admins as $adminData) {
-            // Crea o busca el usuario admin
+            // Crea o encuentra el usuario administrador
             $user = User::firstOrCreate(
                 ['email' => $adminData['email']],
                 [
@@ -31,10 +33,8 @@ class AdminUserSeeder extends Seeder
                 ]
             );
 
-            // Asigna el rol de admin al que se ingrese en la funcion
-            $user->assignRole('Admin');
+            // Asigna el rol "Admin" al usuario
+            $user->assignRole($adminRole);
         }
     }
 }
-
-

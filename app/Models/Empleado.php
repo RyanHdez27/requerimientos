@@ -15,7 +15,6 @@ class Empleado extends Model
      * 
      */
     protected $fillable = [
-        'user_id',
         'nombre',
         'apellido',
         'documento',
@@ -26,6 +25,8 @@ class Empleado extends Model
         'salario',
         'fechaContratacion',
         'informacionBeneficios',
+        'user_id',
+
     ];
 
     /**

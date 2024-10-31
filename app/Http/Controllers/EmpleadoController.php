@@ -38,32 +38,44 @@ class EmpleadoController extends Controller
             'apellido' => 'required|string',
             'documento' => 'required|string|unique:empleados',
             'fechaNacimiento' => 'required|date',
-            'email' => 'required|email|unique:empleados',
+            'email' => 'required|email|unique:users,email',
             'telefono' => 'required|string',
             'direccion' => 'required|string',
             'salario' => 'required|numeric',
             'fechaContratacion' => 'required|date',
             'informacionBeneficios' => 'nullable|string',
-            'rol' => 'nullable|string|in:Usuario,Admin', // Asigna el rol 
+            'rol' => 'nullable|string|in:Usuario,Admin', 
         ]);
-
-        // Crea el usuario automático
+    
+        // Crea el usuario en la tabla users para que tome el rol al momento de loguearse
         $user = User::create([
             'name' => $data['nombre'] . ' ' . $data['apellido'],
             'email' => $data['email'],
-            'password' => Hash::make($data['documento']), // documento es la contraseña
+            'password' => Hash::make($data['documento']), 
         ]);
-
-        // Asigna el rol de Usuario o Admin
-        $role = $request->input('rol', 'Usuario'); // Si no se especificael rol se asigna "Usuario"
+    
+        // Asignar el rol
+        $role = $data['rol'] ?? 'Usuario'; 
         $user->assignRole($role);
-
-        // Crea el empleado con un id
-        $data['user_id'] = $user->id;
-        Empleado::create($data);
-
-        return redirect()->route('empleados.index')->with('success', 'Empleado y usuario creados exitosamente.');
+    
+        // Crea el usuario tambien en la tabla empleados
+        Empleado::create([
+            'nombre' => $data['nombre'],
+            'apellido' => $data['apellido'],
+            'documento' => $data['documento'],
+            'fechaNacimiento' => $data['fechaNacimiento'],
+            'email' => $data['email'],
+            'telefono' => $data['telefono'],
+            'direccion' => $data['direccion'],
+            'salario' => $data['salario'],
+            'fechaContratacion' => $data['fechaContratacion'],
+            'informacionBeneficios' => $data['informacionBeneficios'] ?? null,
+            'user_id' => $user->id, // Enlazar con el ID del usuario
+        ]);
+    
+        return redirect()->route('empleados.index')->with('success', 'Empleadocreado exitosamente.');
     }
+    
 
     /**
      * Display the specified resource.
