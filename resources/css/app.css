@@ -1,7 +1,52 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import "bootstrap/dist/css/bootstrap.min.css";
+
 
 [x-cloak] {
     display: none;
 }
+
+/* Archivo: resources/css/app.css */
+
+/* Estilos generales para tablas */
+.table {
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.table thead {
+    background-color: #343a40;
+    color: #ffffff;
+}
+
+.table-hover tbody tr:hover {
+    background-color: rgba(52, 58, 64, 0.05); /* Fondo suave en hover */
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: #f9f9f9;
+}
+
+.table th, .table td {
+    padding: 12px;
+    vertical-align: middle;
+    text-align: center;
+}
+
+/* Estilos para botones en tablas */
+.table .btn {
+    margin: 0 2px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.table .btn-warning {
+    color: #ffffff;
+}
+
+.table .btn-danger {
+    color: #ffffff;
+}
+

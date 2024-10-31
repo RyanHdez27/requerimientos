@@ -17,5 +17,7 @@ Route::middleware([
     })->name('dashboard');
 });
 
-Route::resource('empleados', EmpleadoController::class);
-Route::post('/empleados', [EmpleadoController::class, 'store'])->name('empleados.store');
+// CRUD de Empleados usando el EmpleadoController
+Route::middleware(['auth'])->group(function () {
+    Route::resource('empleados', EmpleadoController::class);
+});

@@ -1,13 +1,16 @@
 @extends('layouts.app')
 
-@section('content')
-<div class="container">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <a href="{{ route('empleados.create') }}" class="btn btn-primary">Crear Empleado</a>
-    </div>
+@section('page-title', 'Lista de Empleados')
 
-    <table class="table table-bordered table-striped">
-        <thead>
+@section('content')
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="text-secondary">Empleados</h2>
+    <a href="{{ route('empleados.create') }}" class="btn btn-success">Crear Nuevo Empleado</a>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-hover table-bordered table-striped align-middle">
+        <thead class="table-dark text-center">
             <tr>
                 <th>ID</th>
                 <th>Nombre</th>
@@ -24,20 +27,17 @@
         <tbody>
             @forelse($empleados as $empleado)
                 <tr>
-                    <td>{{ $empleado->idEmpleado }}</td>
+                    <td class="text-center">{{ $empleado->idEmpleado }}</td>
                     <td>{{ $empleado->nombre }}</td>
                     <td>{{ $empleado->apellido }}</td>
                     <td>{{ $empleado->fechaNacimiento }}</td>
                     <td>{{ $empleado->email }}</td>
                     <td>{{ $empleado->telefono }}</td>
                     <td>{{ $empleado->direccion }}</td>
-                    <td>{{ $empleado->salario }}</td>
+                    <td>${{ number_format($empleado->salario, 2) }}</td>
                     <td>{{ $empleado->fechaContratacion }}</td>
-                    <td>
-
+                    <td class="text-center">
                         <a href="{{ route('empleados.edit', $empleado->idEmpleado) }}" class="btn btn-warning btn-sm">Editar</a>
-
-
                         <form action="{{ route('empleados.destroy', $empleado->idEmpleado) }}" method="POST" style="display: inline-block;">
                             @csrf
                             @method('DELETE')

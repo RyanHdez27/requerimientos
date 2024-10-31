@@ -16,6 +16,7 @@ class EmpleadoController extends Controller
     public function index()
     {
         $empleados = Empleado::all();
+        
         return view('empleados.index', compact('empleados'));
     }
 
@@ -35,7 +36,7 @@ class EmpleadoController extends Controller
         $data = $request->validate([
             'nombre' => 'required|string',
             'apellido' => 'required|string',
-            'documento' => 'required|string|unique:empleados', 
+            'documento' => 'required|string|unique:empleados',
             'fechaNacimiento' => 'required|date',
             'email' => 'required|email|unique:empleados',
             'telefono' => 'required|string',
@@ -43,22 +44,24 @@ class EmpleadoController extends Controller
             'salario' => 'required|numeric',
             'fechaContratacion' => 'required|date',
             'informacionBeneficios' => 'nullable|string',
-            'rol' => 'nullable|string|in:Usuario,Admin', // asigna el rol
+            'rol' => 'nullable|string|in:Usuario,Admin', // Asigna el rol 
         ]);
-    
-        $empleado = Empleado::create($data);
-    
-        // crea usuario automaticamente con las credenciales
+
+        // Crea el usuario automático
         $user = User::create([
             'name' => $data['nombre'] . ' ' . $data['apellido'],
             'email' => $data['email'],
-            'password' => Hash::make($data['documento']), // documento es el password
+            'password' => Hash::make($data['documento']), // documento es la contraseña
         ]);
-    
-        // asigna el rol dependiendo del campo 
-        $role = $request->input('rol', 'Usuario'); // se asigna el rol de usuario automatico si no se coloca manual
+
+        // Asigna el rol de Usuario o Admin
+        $role = $request->input('rol', 'Usuario'); // Si no se especificael rol se asigna "Usuario"
         $user->assignRole($role);
-    
+
+        // Crea el empleado con un id
+        $data['user_id'] = $user->id;
+        Empleado::create($data);
+
         return redirect()->route('empleados.index')->with('success', 'Empleado y usuario creados exitosamente.');
     }
 
@@ -86,7 +89,7 @@ class EmpleadoController extends Controller
         $data = $request->validate([
             'nombre' => 'required|string',
             'apellido' => 'required|string',
-            'documento' => 'required|string',
+            'documento' => 'required|string|unique:empleados,documento,' . $empleado->idEmpleado,
             'fechaNacimiento' => 'required|date',
             'email' => 'required|email|unique:empleados,email,' . $empleado->idEmpleado,
             'telefono' => 'required|string',
@@ -96,8 +99,20 @@ class EmpleadoController extends Controller
             'informacionBeneficios' => 'nullable|string',
         ]);
 
+        // Actualizar el empleado
         $empleado->update($data);
-        return redirect()->route('empleados.index');
+
+        // Actualizar el usuario relacionado
+        $user = $empleado->user;
+        if ($user) {
+            $user->update([
+                'name' => $data['nombre'] . ' ' . $data['apellido'],
+                'email' => $data['email'],
+                'password' => Hash::make($data['documento']), // Actualiza la contraseña si cambió el documento
+            ]);
+        }
+
+        return redirect()->route('empleados.index')->with('success', 'Empleado y usuario actualizados exitosamente.');
     }
 
     /**
@@ -105,13 +120,13 @@ class EmpleadoController extends Controller
      */
     public function destroy(Empleado $empleado)
     {
-    // Obtener y eliminar el usuario relacionado
-    $user = User::where('email', $empleado->email)->first();
-    if ($user) {
-        $user->delete();
-    }
+        // Elimina el usuario relacionado
+        $user = $empleado->user;
+        if ($user) {
+            $user->delete();
+        }
 
-    $empleado->delete();
-    return redirect()->route('empleados.index');
+        $empleado->delete();
+        return redirect()->route('empleados.index')->with('success', 'Usuario eliminado exitosamente.');
     }
 }
